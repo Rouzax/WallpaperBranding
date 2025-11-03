@@ -142,17 +142,32 @@ function Get-RelativePath {
     [Parameter(Mandatory)][string]$BasePath,
     [Parameter(Mandatory)][string]$TargetPath
   )
-  $base = ($BasePath.TrimEnd('\','/')) + [IO.Path]::DirectorySeparatorChar
-  $target = $TargetPath
+
+  # Normalize to absolute paths and ensure trailing separator on base
+  $baseFull   = [IO.Path]::GetFullPath($BasePath)
+  $targetFull = [IO.Path]::GetFullPath($TargetPath)
+  $baseWithSep = ($baseFull.TrimEnd('\','/')) + [IO.Path]::DirectorySeparatorChar
+
   try {
-    $uBase = New-Object System.Uri($base, [System.UriKind]::Absolute)
-    $uTarget = New-Object System.Uri($target, [System.UriKind]::Absolute)
-    $rel = $uBase.MakeRelativeUri($uTarget).ToString().Replace('/', '\')
-    return $rel.TrimEnd('\')
-  } catch {
+    $uBase   = New-Object System.Uri($baseWithSep, [System.UriKind]::Absolute)
+    $uTarget = New-Object System.Uri($targetFull, [System.UriKind]::Absolute)
+
+    # Make relative URI -> unescape any %xx -> normalize separators
+    $relEscaped = $uBase.MakeRelativeUri($uTarget).ToString()
+    $rel = [System.Uri]::UnescapeDataString($relEscaped).Replace('/', '\').TrimEnd('\')
+
+    return $rel
+  }
+  catch {
+    # Fallback if paths are on different volumes or URI fails
+    if ($targetFull.StartsWith($baseWithSep, [StringComparison]::OrdinalIgnoreCase)) {
+      $raw = $targetFull.Substring($baseWithSep.Length)
+      return $raw.Replace('/', '\').TrimEnd('\')
+    }
     return ""
   }
 }
+
 
 function Get-Gravity {
   param([Parameter(Mandatory)][string]$Pos)
