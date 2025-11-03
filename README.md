@@ -152,3 +152,12 @@ Export as **JPEG** with tuned settings:
   * Windows 10 / 11
   * PowerShell 5.1 and 7.4
   * ImageMagick 7.1.1+
+ 
+---
+
+## 🖼️ Image Examples
+ 
+![Center](https://github.com/user-attachments/assets/f7ee7582-cf06-48f8-80b8-c08bf8e11a60)
+![Bottom Right](https://github.com/user-attachments/assets/61465885-d26c-4c4a-951b-1c15d15f99a3)
+![Top Right](https://github.com/user-attachments/assets/4ca9e9a9-e276-4971-bc38-212313812801)
+![Bottom Left](https://github.com/user-attachments/assets/637b248f-f0fd-4aaf-b401-849857d80687)
